@@ -49,6 +49,7 @@ let waitingPlayerAnswer = false;
 let canStartRound = true;
 //Controla se uma nova rodada pode ser iniciada. Quando true, o jogador pode iniciar uma nova rodada. Depois de iniciar uma rodada, isso se torna false até que a rodada atual seja concluída.
 
+
 // Função para obter um valor aleatório de uma array
 const getRandomValueAtArray = (array) => {
     return array[Math.floor(Math.random() * array.length)];
@@ -87,9 +88,7 @@ const callRound = () => {
     controlElement.style.backgroundColor = 'yellow';
     controlStatusElement.innerHTML = 'OBSERVE';
 
-    roundAnswers = [];
-
-    const loopLimit = difficulty;
+    const loopLimit = difficulty - roundAnswers.length;
 
     for (let i = 0; i < loopLimit; i++) {
         const randomValue = getRandomValueAtArray(buttonElements);
@@ -97,7 +96,6 @@ const callRound = () => {
     }
 
     displaySequence(0);
-    waitingPlayerAnswer = true; // Adicione esta linha para corrigir o problema
 };
 
 // Função para alternar o estilo do cursor dos botões
@@ -127,12 +125,9 @@ const updateScore = () => {
 };
 
 // Função para processar as respostas do jogador
-Entendi, peço desculpas pela confusão. Vamos ajustar o código para que ele siga a lógica que você mencionou. Aqui está o código atualizado:
-
-
-// Função para processar as respostas do jogador
 const processAnswers = () => {
     waitingPlayerAnswer = false;
+
     toggleButtonsCursorStyle();
 
     let allCorrect = true;
@@ -149,6 +144,7 @@ const processAnswers = () => {
     if (allCorrect) {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'green';
+
         controlStatusElement.innerHTML = 'ACERTOU';
 
         setTimeout(() => {
@@ -157,14 +153,21 @@ const processAnswers = () => {
     } else {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'red';
+
         controlStatusElement.innerHTML = 'RECOMEÇAR';
 
-        // Ao errar, reinicia a sequência a partir do início
-        score = 0;
+        // Atualizando a maior pontuação e armazenando localmente
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore.toString());
+        }
+
         canStartRound = true;
     }
 
     score = (allCorrect) ? score + 1 : score;
+    score = (allCorrect) ? score : 0;
+
     updateScore();
     revampDifficulty(allCorrect);
 };
