@@ -97,6 +97,7 @@ const callRound = () => {
     }
 
     displaySequence(0);
+    waitingPlayerAnswer = true; // Adicione esta linha para corrigir o problema
 };
 
 // Função para alternar o estilo do cursor dos botões
