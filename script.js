@@ -126,9 +126,12 @@ const updateScore = () => {
 };
 
 // Função para processar as respostas do jogador
+Entendi, peço desculpas pela confusão. Vamos ajustar o código para que ele siga a lógica que você mencionou. Aqui está o código atualizado:
+
+
+// Função para processar as respostas do jogador
 const processAnswers = () => {
     waitingPlayerAnswer = false;
-
     toggleButtonsCursorStyle();
 
     let allCorrect = true;
@@ -145,7 +148,6 @@ const processAnswers = () => {
     if (allCorrect) {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'green';
-
         controlStatusElement.innerHTML = 'ACERTOU';
 
         setTimeout(() => {
@@ -154,21 +156,14 @@ const processAnswers = () => {
     } else {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'red';
-
         controlStatusElement.innerHTML = 'RECOMEÇAR';
 
-        // Atualizando a maior pontuação e armazenando localmente
-        if (score > highScore) {
-            highScore = score;
-            localStorage.setItem('highScore', highScore.toString());
-        }
-
+        // Ao errar, reinicia a sequência a partir do início
+        score = 0;
         canStartRound = true;
     }
 
     score = (allCorrect) ? score + 1 : score;
-    score = (allCorrect) ? score : 0;
-
     updateScore();
     revampDifficulty(allCorrect);
 };
