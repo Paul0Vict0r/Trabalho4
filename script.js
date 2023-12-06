@@ -1,44 +1,79 @@
 // Selecionando elementos do DOM
-const buttonElements = document.querySelectorAll('.clickable'); // Botões clicáveis
-const controlElement = document.querySelector('.control .background'); // Área de fundo do botão de controle
-const controlStatusElement = document.querySelector('.control p'); // Elemento <p> dentro da área de controle
-const scoreElement = document.querySelector('.score'); // Elemento que exibe a pontuação atual
-const highScoreElement = document.querySelector('.high-score'); // Elemento que exibe a pontuação mais alta
-const container = document.querySelector('.container'); // Contêiner principal do jogo
-const nightModeButton = document.querySelector('.night-mode-button'); // Botão para alternar entre os modos noturno e diurno
+
+const buttonElements = document.querySelectorAll('.clickable');
+// Essa linha seleciona todos os elementos no documento que possuem a classe CSS "clickable" e armazena essa coleção de elementos na variável buttonElements. Esses elementos representam os botões clicáveis do jogo.
+
+const controlElement = document.querySelector('.control .background');
+//Aqui, o código seleciona o elemento com a classe CSS "background" que está dentro de um elemento com a classe "control". Esse elemento representa a área de fundo do botão de controle no jogo e é armazenado na variável controlElement.
+
+const controlStatusElement = document.querySelector('.control p');
+//Essa linha seleciona o elemento <p> dentro de um elemento com a classe "control". Esse elemento é responsável por exibir o status do botão de controle no jogo, e a referência é armazenada em controlStatusElement.
+
+const scoreElement = document.querySelector('.score');
+//Aqui, o código seleciona o elemento com a classe CSS "score", que é responsável por exibir a pontuação atual no jogo. A referência é armazenada na variável scoreElement.
+
+const highScoreElement = document.querySelector('.high-score');
+//Essa linha seleciona o elemento com a classe CSS "high-score", que exibe a pontuação mais alta alcançada no jogo. A referência é armazenada em highScoreElement.
+
+const container = document.querySelector('.container');
+//Aqui, o código seleciona o elemento com a classe CSS "container", que representa o contêiner principal do jogo. Essa referência é armazenada em container.
+
+const nightModeButton = document.querySelector('.night-mode-button');
+//Essa linha seleciona o elemento com a classe CSS "night-mode-button", que representa o botão para alternar entre os modos noturno e diurno no jogo. A referência é armazenada em nightModeButton.
+
 
 // Variáveis do jogo
-let roundAnswers = []; // Respostas geradas aleatoriamente pelo jogo em cada rodada
-let playerAnswers = []; // Respostas do jogador durante a rodada atual
-let difficulty = 4; // Nível de dificuldade do jogo (quantidade de botões a serem lembrados)
-let intervalDecrease = 0; // Controle da diminuição do intervalo de exibição dos botões durante a reprodução da sequência
-let score = 0; // Pontuação atual do jogador (quantidade de rodadas completadas com sucesso)
-let highScore = 0; // Recorde mais alto alcançado pelo jogador em termos de pontuação
-let waitingPlayerAnswer = false; // Indica se o jogo está aguardando a resposta do jogador
-let canStartRound = true; // Controla se uma nova rodada pode ser iniciada
+
+let roundAnswers = [];
+//Essa variável armazena as respostas geradas aleatoriamente pelo jogo em cada rodada. Inicialmente, está vazia porque o jogo ainda não começou.
+
+let playerAnswers = [];
+//Esta variável guarda as respostas do jogador durante a rodada atual. Inicia vazia e é preenchida à medida que o jogador clica nos botões.
+
+let difficulty = 4;
+//Representa o nível de dificuldade do jogo, indicando quantos botões o jogador precisa lembrar e reproduzir para completar uma rodada. Começa com 4 botões.
+
+let intervalDecrease = 0;
+//Controla a diminuição do intervalo de exibição dos botões durante a reprodução da sequência. Inicia com 0 e pode aumentar à medida que o jogador progride no jogo.
+
+let score = 0;
+//Armazena a pontuação atual do jogador, indicando quantas rodadas foram completadas com sucesso.
+
+let highScore = 0;
+//Mantém o recorde mais alto alcançado pelo jogador em termos de pontuação. Inicia em 0 e é atualizado conforme o jogador atinge novas pontuações mais altas.
+
+
+let waitingPlayerAnswer = false;
+//Indica se o jogo está aguardando a resposta do jogador. Quando true, significa que o jogador deve reproduzir a sequência. Quando false, o jogador não deve clicar nos botões.
+
+let canStartRound = true;
+//Controla se uma nova rodada pode ser iniciada. Quando true, o jogador pode iniciar uma nova rodada. Depois de iniciar uma rodada, isso se torna false até que a rodada atual seja concluída.
+
 
 // Função para obter um valor aleatório de uma array
-const getRandomValueAtArray = (array) => array[Math.floor(Math.random() * array.length)];
+const getRandomValueAtArray = (array) => {
+    return array[Math.floor(Math.random() * array.length)];
+};
 
 // Função para exibir a sequência de cliques
 const displaySequence = (index) => {
     const element = roundAnswers[index];
+
     setTimeout(() => {
         element.classList.add('active');
+
         setTimeout(() => {
             element.classList.remove('active');
             index++;
 
-            // Se ainda houver elementos na sequência, continuar exibindo
             if (index < roundAnswers.length) {
                 displaySequence(index);
-            } 
-
-            // Se a sequência foi totalmente exibida, permitir que o jogador responda
-            else {
+            } else {
                 waitingPlayerAnswer = true;
+
                 controlElement.style.backgroundColor = 'lightblue';
                 controlStatusElement.innerHTML = 'REPRODUZA';
+
                 toggleButtonsCursorStyle();
             }
         }, 750 - intervalDecrease);
@@ -49,26 +84,23 @@ const displaySequence = (index) => {
 const callRound = () => {
     playerAnswers = [];
 
-    // Configurações visuais iniciais para a rodada
     controlElement.style.cursor = 'auto';
     controlElement.style.backgroundColor = 'yellow';
     controlStatusElement.innerHTML = 'OBSERVE';
 
     const loopLimit = difficulty - roundAnswers.length;
 
-    // Gera respostas aleatórias para a rodada
     for (let i = 0; i < loopLimit; i++) {
         const randomValue = getRandomValueAtArray(buttonElements);
         roundAnswers.push(randomValue);
     }
 
-    displaySequence(0); // Inicia a exibição da sequência
+    displaySequence(0);
 };
 
 // Função para alternar o estilo do cursor dos botões
 const toggleButtonsCursorStyle = () => {
     for (let element of buttonElements) {
-        // Alterna entre 'pointer' e '' (cursor padrão)
         element.style.cursor = element.style.cursor === 'pointer' ? '' : 'pointer';
     }
 };
@@ -76,13 +108,9 @@ const toggleButtonsCursorStyle = () => {
 // Função para ajustar a dificuldade do jogo
 const revampDifficulty = (toIncrease) => {
     if (toIncrease) {
-        // Aumenta a dificuldade e diminui o intervalo de exibição dos botões
         difficulty++;
         intervalDecrease = (intervalDecrease < 800) ? intervalDecrease + 10 : intervalDecrease;
-    } 
-    
-    else {
-        // Reinicia a dificuldade e o intervalo
+    } else {
         difficulty = 4;
         intervalDecrease = 0;
     }
@@ -90,20 +118,20 @@ const revampDifficulty = (toIncrease) => {
 
 // Função para atualizar a pontuação e armazenar localmente
 const updateScore = () => {
-    // Atualiza os elementos visuais com a pontuação
     scoreElement.innerHTML = score;
     highScoreElement.innerHTML = (highScore > 0) ? highScore : '-';
-    // Armazena a pontuação mais alta localmente
+
     localStorage.setItem('highScore', highScore.toString());
 };
 
 // Função para processar as respostas do jogador
 const processAnswers = () => {
     waitingPlayerAnswer = false;
+
     toggleButtonsCursorStyle();
+
     let allCorrect = true;
 
-    // Verifica se as respostas do jogador coincidem com as respostas do jogo
     for (let i in roundAnswers) {
         const properAnswer = roundAnswers[i];
         const playerAnswer = playerAnswers[i];
@@ -113,46 +141,43 @@ const processAnswers = () => {
         }
     }
 
-    // Se todas as respostas estiverem corretas, avança para a próxima rodada
     if (allCorrect) {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'green';
+
         controlStatusElement.innerHTML = 'ACERTOU';
-        setTimeout(() => callRound(), 750);
-    } 
-    
-    // Se houver erros, exibe a mensagem de recomeçar e atualiza a pontuação mais alta
-    else {
+
+        setTimeout(() => {
+            callRound();
+        }, 750);
+    } else {
         controlElement.style.cursor = 'pointer';
         controlElement.style.backgroundColor = 'red';
+
         controlStatusElement.innerHTML = 'RECOMEÇAR';
 
+        // Atualizando a maior pontuação e armazenando localmente
         if (score > highScore) {
             highScore = score;
             localStorage.setItem('highScore', highScore.toString());
         }
 
-        // Permite iniciar uma nova rodada após um breve intervalo
-        setTimeout(() => {
-            if (!waitingPlayerAnswer) {
-                roundAnswers = [];
-                callRound();
-            }
-        }, 1500);
-
         canStartRound = true;
     }
-    // Atualiza a pontuação e ajusta a dificuldade
-    score = (allCorrect) ? score + 1 : 0;
+
+    score = (allCorrect) ? score + 1 : score;
+    score = (allCorrect) ? score : 0;
+
     updateScore();
     revampDifficulty(allCorrect);
 };
 
 // Função para processar o clique em um botão
 const processClick = (element) => {
-    if (!waitingPlayerAnswer) return;
+    if (!waitingPlayerAnswer) {
+        return;
+    }
 
-    // Registra a resposta do jogador e adiciona estilo visual
     playerAnswers.push(element);
     element.classList.add('active');
 
@@ -162,7 +187,6 @@ const processClick = (element) => {
 
     const i = playerAnswers.length - 1;
 
-    // Verifica se a resposta do jogador está correta ou se todas as respostas foram dadas
     if (playerAnswers[i] !== roundAnswers[i] || playerAnswers.length === roundAnswers.length) {
         processAnswers();
     }
@@ -170,8 +194,6 @@ const processClick = (element) => {
 
 // Atribuindo eventos aos elementos
 controlElement.onclick = () => {
-
-    // Inicia uma nova rodada se permitido
     if (canStartRound) {
         callRound();
         canStartRound = false;
@@ -179,13 +201,14 @@ controlElement.onclick = () => {
 };
 
 nightModeButton.onclick = () => {
-    // Alterna entre os modos noturno e diurno
     container.classList.toggle('night-mode');
     container.classList.toggle('day-mode');
 };
 
 for (let element of buttonElements) {
-    element.onclick = () => processClick(element);
+    element.onclick = () => {
+        processClick(element);
+    };
 
     element.onmouseenter = () => {
         if (waitingPlayerAnswer && !element.classList.contains('active')) {
